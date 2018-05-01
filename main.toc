@@ -34,13 +34,15 @@
 \contentsline {subsection}{\numberline {3.6.2}Authorisation by~user information}{22}{subsection.3.6.2}
 \contentsline {chapter}{\numberline {4}Implementation of~Our Solution}{24}{chapter.4}
 \contentsline {section}{\numberline {4.1}Overview}{24}{section.4.1}
-\contentsline {section}{\numberline {4.2}Database}{24}{section.4.2}
-\contentsline {section}{\numberline {4.3}Voting Application}{24}{section.4.3}
-\contentsline {section}{\numberline {4.4}Server for Vote Collection}{24}{section.4.4}
-\contentsline {section}{\numberline {4.5}Machine for Vote Counting}{24}{section.4.5}
-\contentsline {section}{\numberline {4.6}Supplementary Programs}{24}{section.4.6}
-\contentsline {chapter}{\numberline {5}Analysis of~Our Solution}{25}{chapter.5}
-\contentsline {section}{\numberline {5.1}Usability}{25}{section.5.1}
-\contentsline {section}{\numberline {5.2}Security}{25}{section.5.2}
-\contentsline {section}{\numberline {5.3}Accuracy}{25}{section.5.3}
-\contentsline {chapter}{Conclusion}{26}{chapter*.8}
+\contentsline {subsection}{\numberline {4.1.1}Technical Requirements}{24}{subsection.4.1.1}
+\contentsline {subsection}{\numberline {4.1.2}External Libraries and Packages Used}{25}{subsection.4.1.2}
+\contentsline {section}{\numberline {4.2}Database}{25}{section.4.2}
+\contentsline {section}{\numberline {4.3}Voting Application}{25}{section.4.3}
+\contentsline {section}{\numberline {4.4}Server for Vote Collection}{25}{section.4.4}
+\contentsline {section}{\numberline {4.5}Machine for Vote Counting}{25}{section.4.5}
+\contentsline {section}{\numberline {4.6}Supplementary Programs}{25}{section.4.6}
+\contentsline {chapter}{\numberline {5}Analysis of~Our Solution}{26}{chapter.5}
+\contentsline {section}{\numberline {5.1}Usability}{26}{section.5.1}
+\contentsline {section}{\numberline {5.2}Security}{26}{section.5.2}
+\contentsline {section}{\numberline {5.3}Accuracy}{26}{section.5.3}
+\contentsline {chapter}{Conclusion}{27}{chapter*.8}

@@ -33,13 +33,15 @@
 \BOOKMARK [2][-]{subsection.3.6.2}{Authorisation by user information}{section.3.6}% 33
 \BOOKMARK [0][-]{chapter.4}{Implementation of Our Solution}{}% 34
 \BOOKMARK [1][-]{section.4.1}{Overview}{chapter.4}% 35
-\BOOKMARK [1][-]{section.4.2}{Database}{chapter.4}% 36
-\BOOKMARK [1][-]{section.4.3}{Voting Application}{chapter.4}% 37
-\BOOKMARK [1][-]{section.4.4}{Server for Vote Collection}{chapter.4}% 38
-\BOOKMARK [1][-]{section.4.5}{Machine for Vote Counting}{chapter.4}% 39
-\BOOKMARK [1][-]{section.4.6}{Supplementary Programs}{chapter.4}% 40
-\BOOKMARK [0][-]{chapter.5}{Analysis of Our Solution}{}% 41
-\BOOKMARK [1][-]{section.5.1}{Usability}{chapter.5}% 42
-\BOOKMARK [1][-]{section.5.2}{Security}{chapter.5}% 43
-\BOOKMARK [1][-]{section.5.3}{Accuracy}{chapter.5}% 44
-\BOOKMARK [0][-]{chapter*.8}{Conclusion}{}% 45
+\BOOKMARK [2][-]{subsection.4.1.1}{Technical Requirements}{section.4.1}% 36
+\BOOKMARK [2][-]{subsection.4.1.2}{External Libraries and Packages Used}{section.4.1}% 37
+\BOOKMARK [1][-]{section.4.2}{Database}{chapter.4}% 38
+\BOOKMARK [1][-]{section.4.3}{Voting Application}{chapter.4}% 39
+\BOOKMARK [1][-]{section.4.4}{Server for Vote Collection}{chapter.4}% 40
+\BOOKMARK [1][-]{section.4.5}{Machine for Vote Counting}{chapter.4}% 41
+\BOOKMARK [1][-]{section.4.6}{Supplementary Programs}{chapter.4}% 42
+\BOOKMARK [0][-]{chapter.5}{Analysis of Our Solution}{}% 43
+\BOOKMARK [1][-]{section.5.1}{Usability}{chapter.5}% 44
+\BOOKMARK [1][-]{section.5.2}{Security}{chapter.5}% 45
+\BOOKMARK [1][-]{section.5.3}{Accuracy}{chapter.5}% 46
+\BOOKMARK [0][-]{chapter*.8}{Conclusion}{}% 47
