@@ -5,9 +5,15 @@ Our task for this thesis is to develop a functioning electronic election system 
 \section{Overview}
 For the desired system, we implement the electronic voting scheme described in chapter \ref{kap:solution}. This scheme consists of several entities, which together make our election system and some of which are represented by computers. Such \emph{players} have to be implemented independently, each running its own program that provides all its functionality and communication with other entities. Analysis of the final solution can be found in chapter \ref{kap:analysis}.
 
-We have chosen \emph{Python} and \emph{JavaScript} as our primary programming languages. For databases, we use \emph{SQL}, a standard language in database programming.
+We have chosen \emph{Python} and \emph{JavaScript} as our primary programming languages. For databases, we use \emph{SQL}, a standard language in database programming (cite for each language).
 
-In order to run the system correctly, there have to be some technical requirements accomplished. On the client-side, the voter needs to have one of these supported Internet browsers: \emph{Mozilla Firefox}, \emph{Google Chrome} or \emph{Safari}. The system is developed to run on \emph{Linux} distributions and the system can be build from existing Python files. In order to provide the authentication, the server needs to have $Apache 2$ server installed with a module that provide CoSign functionality. More can be read on webpages of our faculty.
+\subsection{Technical Requirements}
+In order to run the system correctly, there have to be some technical requirements accomplished. On the client-side, the voter needs to have one of these supported Internet browsers: \emph{Mozilla Firefox}, \emph{Google Chrome} or \emph{Safari} (cite for each browser).
+
+The system is developed to run on \emph{Linux} distributions and the system can be build from existing Python files. In order to provide the authentication, the Linux voting server needs to have $Apache 2$ server installed with a module that provides CoSign functionality. More about configuration of CoSign can be read on our faculty webpages (cite).
+
+\subsection{External Libraries and Packages Used} 
+We used several external libraries or packages to implement services that we do not program directly.
 \section{Database}
 \section{Voting Application}
 \section{Server for Vote Collection}
