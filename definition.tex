@@ -1,0 +1,106 @@
+\chapter{Description of~the~Electronic Election System}
+\label{kap:definition}
+
+In~this chapter, we talk about some possible definitions of~the~electronic election system, we propose a~definition with which we want to~work and we present some requirements on such a~system. We also discuss two main~approaches to~the~system in terms of technology used and describe our choice of~the~system we use for~our solution.
+
+\section{Definition of~the~Electronic Election System}
+
+\label{sec:def}
+
+To~have the~system correctly and precisely designed, it is necessary to~have it clearly defined. At first, we need to~say something about the~electronic election or voting itself. We have borrowed descriptions from two large online encyclopaedias. We think they are amongst the~first sources to~which a~person being interested in~this particular topic is introduced. According to~Wikipedia, electronic voting "refers to~voting using electronic means to~either aid or take care of~the~chores of~casting and counting votes” \cite{Wiki}. In~comparison, Encyclopaedia~Britannica~offers this description of~electronic voting, "a~form of~computer-mediated voting, in~which voters make their selections with the~aid of~a~computer” \cite{Brit}. It can be observed that the~two descriptions are vague in~terms of~roles, or how the~actual voting and counting is processed. They only say that computers are used to~manipulate with the~votes and that voters are enabled to~vote using computers. For~the~use of~our thesis we define a~computer system which performs manipulation with the~votes and which is responsible for~the~electronic election. This is the~definition we propose:
+\smallbreak
+\textbf{Definition 1:} \emph{Electronic Election System} is a~computer system which
+\begin{itemize}
+\item[i.] authenticates the~voter,
+\item[ii.] enables the~voter to~cast a~vote,
+\item[iii.] securely transfers and stores the~vote,
+\item[iv.] calculates votes.
+\end{itemize}
+\bigbreak
+This definition simply enumerates all the~basic roles of~our electronic election system. We want the~election process to~be as automated as possible; therefore, the~definition is directly derived from the~tasks performed during regular election for~our academic senate. The~system authenticates a~voter, so it checks whether the~voter is authorised to~vote; it enables every authorised voter to~cast their vote; it transmits and stores every vote in~a~way that no vote is lost or changed; and after the~voting period has ended, it calculates all the~votes and outputs the~result.
+
+%According to~Zuzana~Rjašková, "the~authorities and the~voters have to~follow electronic voting scheme" \cite{Rjaskova}. 
+All the~authorities and voters involved in~electronic elections need to~follow a~particular electronic voting scheme (or protocol). This scheme prescribes procedures which should be proceeded during the~voting process and which should describe how the~electronic election system should perform its roles. 
+%Rjašková \cite{Rjaskova} defines three stages of~which electronic voting scheme consists:
+Such scheme usually consists of~three stages \cite{Rjaskova}:
+\begin{enumerate}
+\item \textbf{Initialisation}, during which the~elections are announced, questions are being made, and all the~private and public keys are being generated. 
+\item \textbf{Voting}, during which voters are casting their votes: ballots are being created and then sent.
+\item \textbf{Counting}, during which ballots are being opened and counted, and the~final results of~the~elections are being published.
+\end{enumerate}
+
+Several existing voting schemes are discussed in~chapter \ref{kap:existing} and our proposed voting scheme is described in~chapter \ref{kap:solution}.
+
+\section{Requirements on an Electronic Election System}
+
+\label{sec:requirements}
+
+Every electronic election system must satisfy several requirements to~make sure that all its tasks have been performed unmistakably and that the~result is demonstrably correct. In~this section, we present several requirements which we find essential for~the~purposes of~the~elections to~the~academic senate. We also compare them to~the~requirements presented in~bibliography sources on this topic. %particularly with \cite{BunSri} and \cite{Rjaskova}.
+
+P. P. Bungale and S. Sridhar from Johns Hopkins University, Baltimore have named several \emph{Requirements for~an Electronic Voting System} \cite{BunSri}. They have divided them into~two categories: "Functional Requirements" and "Security Requirements". We have chosen several of~them which we find most important for~our electronic election system, and we have added a~few that are not included in~Bungale's and Sridhar's original paper, yet we find them very important. We have partially followed their division. However, besides adapting the~terminology we have added an extra~category for~the~sake of~better distinction.  Thus, we divided them in~these three categories: \emph{usability}, \emph{security}, \emph{accuracy}. 
+\bigbreak
+Usability requirements are \emph{easy-to-use user interface}, \emph{mobility}, \emph{cost-effectiveness} and \emph{confirmation}.
+\begin{itemize}
+\item \textbf{Easy-to-use user interface.} The~system should have a~user interface which voter can use easily with (almost) no instructions provided. On top of~that, voting options should be displayed in~a~way that no candidate is disadvantaged.
+%Also, as stated in~\cite{BunSri}, the~user interface "shall not disadvantage any candidate while displaying the~choices".
+\item \textbf{Mobility.} The~voters should not be restricted to~a~certain~place where they can vote. In~terms~of~electronic voting, the~voter should not be limited to~a~certain~type of~technology used for~voting. In~spite of~Bungale's and Sridhar's opinion, who call voting via~the~Internet "\emph{infeasible} both for~security issues as well as social science issues" \cite{BunSri}, we advocate Internet voting because we think that in~certain~conditions, it is preferable and can meet our requirements (particularly this one).
+\item \textbf{Cost-effectiveness.} The~technology used for~electronic voting should~not be expensive and hard to~implement, yet it must provide adequate functionality and security, so it can be effectively used as an electronic election system.
+\item \textbf{Confirmation.} Each voter should have the~chance to~confirm that their vote corresponds their own decision and have the~chance to~modify their vote before committing it. Voters also should have the~chance to~verify whether their vote was correctly transferred and stored.
+\end{itemize}
+
+Security requirements are \emph{secrecy}, \emph{anonymity}, \emph{reliability} and \emph{incoercibility}.
+\begin{itemize}
+\item \textbf{Secrecy.} There must be no chance to~determine how a~voter voted.
+\item \textbf{Anonymity.} No vote must be associated with a~voter's identity.
+\item \textbf{Reliability.} The~system must be robust enough, so that no votes are lost or illegally changed in~any case, and it must be ensured there is no~malicious code or bugs. Also, the~system should be simple enough because such system offers fewer possibilities for~the~attackers and, thus, is less vulnerable.
+\item \textbf{Incoercibility.} There must be no way in~which voter can prove how they have voted. This prevents from anyone else's impact on voter's choice and it also prevents from vote-selling.
+\end{itemize}
+
+Accuracy requirements are \emph{authorisation}, \emph{uniqueness and limitation}, \emph{persistence} and \emph{correct computation}.
+
+\begin{itemize}
+%\item \textbf{Eligibility.} "Only eligible voters can cast the~votes" \cite{Rjaskova}.
+\item \textbf{Authorisation.} It must be secured that only authorised voters can cast their votes.
+\item \textbf{Uniqueness and limitation.}  Each voter can participate in~an election by~no~more than one vote and no~more candidates than allowed can be chosen.
+%Each voter must not be allowed to~cast more than one vote
+\item \textbf{Persistence.} It must be guaranteed that votes remain~intact after they have been committed and sent.
+\item \textbf{Correct computation.} The~votes must be correctly computed according to~the~published rules of~the~election.
+\end{itemize}
+For~comparison, Rjašková \cite{Rjaskova} has provided a~set of~seven requirements, which we introduce to~the~reader: \emph{eligibility}, \emph{privacy}, \emph{individual verifiability}, \emph{universal verifiability}, \emph{fairness}, \emph{robustness}, \emph{receipt-freeness}, \emph{incoercibility}. We strongly believe that almost each our requirement finds its counterpart in~one or more Rjašková's requirements, and vice versa. For~instance, counterpart to~confirmation is individual verifiability and counterpart to~reliability is robustness. Receipt-freeness means that there is no way to prove how a voter voted \cite{Delaune}. This can be substituted for incoercibility and vice versa.
+
+\section{Types of~Electronic Election System}
+
+%In~\ref{sec:requirements}, we have named several requirements that strongly influence how our system is developed. 
+In~this section, we present two possible types of~electronic election system, which are the~most common, and of~which we choose one for~our purposes. Then, we compare those two types regarding our requirements which we presented in~section \ref{sec:requirements}. We also present their advantages and their drawbacks. Finally, we give reasons for~our choice of~used type of~electronic election system.
+
+Regarding the~technology used during the~voting phase (as described in~\ref{sec:def}), there are two main~types of~electronic election system: \emph{e-voting} and \emph{i-voting} \cite{Brit}.
+
+\subsection{E-voting} 
+This type uses special-purpose machines designed directly for~the~purposes of~the~elections. These machines either directly record the~ballots or they optically scan traditional paper ballots, which are then stored in~their internal memory. 
+
+%"Assurance that the~vote is recorded as cast relies on testing of~the~machine’s hardware and software before the~election and confidence that the~software running during the~election is the~same software as the~one tested before the~election" \cite{Brit}. 
+Reliability relies on testing the~machines during the~initialisation phase and on confidence that the~same software is running during the~whole election process. However, thanks to~relatively smaller number of~individual machines used during the~election and thanks to~higher possible responsibility from the~authority, these machines can be checked for~malicious software and controlled without much difficulty. Also, network communication between a~device of~this type and any other device is generally disabled. Hence, it is possible to~implement this type of~electronic election system in~a~way that it does not break security requirement in~such a~manner which is fatal to~the~election process. 
+
+However, regarding functional requirements, we find this type of~system awkward. Firstly, special-purpose hardware is built to~hold the~tasks during the~election process and these machines are placed in~special-purpose polling stations where is a~commission to~control voting process. Voters have to~come to~the~polling station where they can cast their ballot. Depending on the~software in~these machines, it is possible that the~voter has to~learn how to~use the~machine before they cast their vote.
+\subsection{I-voting}
+The~second type, on the~other hand, uses Internet to~hold the~communication between the~authorities and the~voter that enables the~voter to~be authorised and to~cast their vote. 
+
+One of~the~biggest security issues with this type of~the~system is the~relatively large amount of~independent devices, owned mainly by~the~voters themselves, which can run a~malicious software which might not, depending on the~security support of~the~individual device, be spotted. 
+%As is written in~\cite{Brit}, "security experts worry that many personal computers are vulnerable to~penetration by~various types of~malware". 
+Rubin~notes how many violent acts may potential attackers perform: "view every aspect of~the~voting procedure, intercept any action performed by~the~legitimate user with the~potential of~modifying it without the~user’s knowledge, and further install any other program of~the~attacker’s desire—even those written by~the~attacker—on the~voter’s machine" \cite{Rubin}.  The~second issue is the~Internet communication itself. Thus, cryptographic protocols, some of~which are to~be described particularly in~chapters \ref{kap:existing} and \ref{kap:solution} and~which are largely discussed in~\cite{Rjaskova}, are used to~prevent Internet communication from vulnerability during the~election process and to~assure to~a~great extent that security and accuracy requirements are not to~be broken.
+
+Despite all the~security issues, mobility and cost-effectiveness are two important advantages of~this type of~electronic voting system. A~voter needs nothing, but their computer or mobile device with either a~special-purpose application or Internet browser. Moreover, it is relatively cheap to~develop a~special software that runs on a~user's device. There is left to~consider these two approaches to~the~software solution—whether to~use Internet browser or a~special-purpose application—because we find the~first option as preferable from the~point of~view of~mobility, whilst the~second is, in~our opinion, preferable when considering security. We should still bear in~mind that a~lot of~important details lie on the~way how the~system is developed, which is to~be discussed more deeply in~chapters \ref{kap:solution} and \ref{kap:implementation}.
+
+\subsection{Comparison}
+
+All these facts and expectations described above have been considered for~the~purposes of~our choice. We state that not all requirements we present in~section \ref{sec:requirements} and which are tight to~the~two types described in~this section are equally important for~the~purposes of~the~system. Also, some requirements can be equally satisfied using either type. Mobility and cost-effectiveness have perhaps been the~most crucial during our decision process because our system is to~be made for~no more than a~thousand of~voters involved in~one election. Albeit not the~most secure, our system should provide reasonable security using accessible solutions. Some other security and functional requirements, such as anonymity, reliability and persistence, are essential, but these can be adequately achieved using either type of~the~system and appropriate protocols. 
+
+E-voting systems are ideal for~elections involving a~large number of~voters, e.g. parliamentary elections, which is not our case. Thus, we decided to~use i-voting because it meets our functional requirements perfectly and it also provides adequate security thanks to~cryptography. Possible security issues can be treated quite quickly without any difficulty also thanks to~the~relatively small amount of~individuals involved in~the~elections.
+
+%We have chosen i-voting for~the~purposes of~our electronic election system for~academic senate.
+%E-voting systems are ideal for~large parliamentary elections, where 
+%We would like to~create system which provides reasonable security using accessible solutions.
+
+
+
+

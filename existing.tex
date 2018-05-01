@@ -1,0 +1,131 @@
+\chapter{Summary of~Existing Solutions}
+\label{kap:existing}
+In~this chapter, we introduce and describe some techniques used to~design electronic voting schemes as well as some existing solutions to~the~electronic elections. 
+
+\section{Electronic Voting Scheme Techniques}
+
+Electronic voting systems use several cryptographic primitives to~assure integrity, authenticity and correct transfer of~votes as well as to~preserve voter's anonymity. There are at least three specific techniques used to~design an~electronic voting scheme. These are \emph{blind signatures}, \emph{anonymous channels} and \emph{homomorphic encryption} \cite{Haenni}. They are used besides symmetric and asymmetric cryptographies, certificates, digital signatures, etc. Here, we describe the~ideas on~which they are based and some of~their properties. We also briefly describe \emph{mixing networks}, \emph{onion~routing} and \emph{David Chaum's untraceable electronic cash protocol}.
+
+\subsection{Blind Signatures}
+In~many voting systems, blind signatures are used to~detach the~vote from~the~voter's identity. The~basic principle of~such schemes is that blinded empty ballot is sent to~the~authority alongside voter's personal information. After verifying voter's identity and correctness of~the~ballot, it is blind signed by~the~authority and sent back to~the~voter. Then, voter unblinds the~ballot, fills it and sends to~votes collector. Simple example of~such a~scheme is described in~\cite{Standford}.
+
+As written in~\cite{Haenni}, all protocol requirements, except receipt-freeness, are accomplished in~schemes using blind signatures when some other cryptographic primitives, such as encryption, are used together with blind signatures. But, these schemes have restricted usability due to~the~fact that in~order to~ensure fairness and verifiability, voters need to~be active in~at least two phases. %In~\cite{Haenni} are also given examples of~protocols that overcome this functional drawback.
+However, there are some protocols that overcome this functional drawback.
+\subsection{Verifiable Anonymous Channels}
+We use anonymous channels to~send anonymous messages. This means that there is no way to~trace the~received message back to~the~sender. Anonymous channels can~be built using \emph{mix networks} or \emph{onion~routing}. 
+\begin{itemize}
+\item \textbf{Mix Network} uses a~chain~of~proxy servers that mix the~multiple messages and send them in~a~random order to~the~next node, which might be either another mixing server or a~different type of~device.
+\item \textbf{Onion~Routing} encapsulates a~message in~new layers of~encryption. Analogous to~this are layers of~onion, hence the~name. The~message is, then, transmitted through a~series of~subsequent routers, each decrypting the~actual top layer of~encryption~and uncovering the~message's next destination. In~every moment of~the~message transfer, only precedent and following location~is known to~each \emph{onion~router}, thus making the~sender's identity untraceable \cite{Goldschlag}.
+\end{itemize}
+
+It is necessary to~ensure that no messages are dropped or substituted during the~transfer. Therefore, \emph{proofs of~correct computation} need to~be provided. Channels that are able to~do so are called \emph{verifiable anonymous channels}. Their main~drawbacks are computational complexity and inefficiency \cite{Haenni}.
+
+
+\subsection{Homomorphic Encryption} 
+Use of~homomorphic encryption~is based on~the~desire to~decrypt the~sum of~votes without being able to~decrypt the~individual ballots. For~that reason, voters can~openly authenticate to~the~server. 
+
+However, such schemes have several serious drawbacks. Not only do they require computationally intensive zero-knowledge proofs, but they also do not allow voter to~choose multiple options.
+\subsection{Untraceable Electronic Cash Protocol}
+In~\cite{Chaum}, David Chaum introduces a~protocol which can~be used to~send electronic cash while preserving sender's anonymity and avoid double-spending at the~same moment. Moreover, if a~sender tries to~send several copies of~an~electronic coin, their identity can~be revealed. The~protocol also provides a~method that can~be used to~reveal double-spender's identity. With a~few modifications, this protocol is useful for~electronic voting to~prevent double-voting. % to~send a~vote and retain~the~same conditions. 
+
+The~Chaum's protocol can~be described in~the~following way. It can~be noticed that we present only the~most important steps to~the~reader.
+%("briefly described in~short sentences"):
+
+In~this example, the~symbol $\cdot$ denotes concatenation. Let $n$ be an~RSA~modulus and let $f$ and $g$ be two-argument collision-free functions. Let $u$ be sender's account number and $v$ be a~counter associated with this number and kept in~the~bank.
+
+\begin{enumerate}
+\item{\textbf{Formation}
+\smallbreak
+\begin{enumerate}
+\item The~sender chooses $k \in~\mathbb{N}$ values $a_i, c_i, d_i$ and $r_i$, where $1 \le i \le k$. All $a_i, c_i, d_i$ and $r_i$ are modulo $n$.
+\item The~sender sends to~the~bank \emph{$k$ blinded candidates} $B_i = r_i^3f(x_i,y_i)\pmod n$, where $x_i = g(a_i,c_i)$ and $y_i = g(a_i \oplus (u\cdot (v+i)), d_i)$.
+\item The~bank randomly picks $k/2$ indexes from~$\{i_1,...,i_k\}$.
+%$\{i_j\}$, where $1 \le j \le k$, 
+The~sender shows their $a_i, c_i, d_i$ and $r_i$ to~the~bank for~each picked $i$. From~these, the~electronic coin~$C$ is formed following steps described in~\cite{Chaum}.
+\end{enumerate}}
+\item{\textbf{Payment}
+\smallbreak
+\begin{enumerate}
+\item In~order to~pay, the~sender sends their coin~$C$ to~the~shopkeeper.
+\item{The~shopkeeper randomly chooses $k/2$ binary values $x_1, ..., x_{k/2}$. For~each $x_i \in~\{x_1, ..., x_{k/2}\}$:
+\begin{itemize}
+\item If $x_i = 0$, the~sender shows the~shopkeeper $a_i, c_i$ and $y_i$.
+\item If $x_i = 1$, the~sender shows the~shopkeeper $a_i \oplus (u\cdot (v+i)), d_i$ and $x_i$.
+\end{itemize}}
+\item The~shopkeeper sends obtained values to~the~bank in~order to~verify the~coin~$C$.
+\end{enumerate}
+}
+\end{enumerate}
+
+When the~sender tries to~use $C$ twice, it can~be observed that with high probability complementary binary values will be sent to~the~bank for~at least one $x_i$ and the~sender's identity will be revealed. This is possible because in~this situation, all the~values $i$, $a_i$ and $a_i \oplus (u\cdot (v+i))$ are known, from~which the~sender's identity can~be easily extracted. 
+
+Although not designed directly for~the~purposes of~electronic election, this protocol can~be used, requiring only slight modifications, such as making $u$ a~unique personal identification~number given to~every voter prior to~the~election. Such a~modified scheme can~be found in~\cite{Radwin}.
+%Then, it can~be used for~the~purposes of~electronic elec
+\section{Existing Electronic Election~Systems}
+Many governments are interested in~replacing traditional election~schemes based on~paper voting with electronic election~systems. At the~turn of~the~millennia, \emph{SERVE} was an~ambitious experiment by~the~United States of~America~in~the~field of~Internet voting. It was later cancelled, mostly due to~large security weaknesses SERVE showed. Switzerland was amongst the~first countries to~use electronic elections in~some of~their cantons. Estonia~was the~first country to~run nationwide electronic parliamentary elections. In~this section, we describe pioneering election~systems developed for~Estonia, Norway and Switzerland.
+
+\subsection{Estonian~Internet Voting}
+Estonian~identification~cards (ID cards) have a~chip that stores asymmetric cryptography key pair, which their owners can~use to~digitally sign documents. This has been used to~develop an~internet voting protocol, which was first used during the~election~in~2005, while it was still possible to~vote traditionally \cite{Springall}. %Estonia~has launched dual voting. Electronic election~is enabled week before the~traditional election. Voter can~remotely change their opinion~as many times as they want, or they can~vote traditionally. 
+
+The~protocol used in~Estonian~internet voting system uses method of~\emph{double envelope}. While the~outer envelope is used to~provide the~voter's identity, the~inner is used to~cryptographically protect the~vote. These entities play role in~this protocol: \emph{voter}, \emph{voting commission}, \emph{voting application}, \emph{server}, \emph{ballot box}, \emph{counting device} and \emph{certification~authority}. 
+\bigbreak
+The~protocol consists of~three stages, which we now describe: 
+\begin{enumerate}
+\item \textbf{Initialisation.} Election~asymmetric encryption~key pair is generated. The~public key is given to~every voter while the~private key is divided using a~secret-sharing scheme and each member of~voting commission~is given their piece. The~voting application~is digitally signed and provided to~every voter.
+\item {\textbf{Voting.} Voter, who has validated their ID card, connects to~the~server and launches the~voting application~on~their device. In~order to~establish secure connection, the~voter needs to~provide a~PIN code associated with their ID card. The~voter, then, chooses their favourite options to~form the~vote. When the~vote is formed, it is encrypted using the~election~public key and a~random value $r$, and the~voter digitally signs the~vote using their ID card. The~\emph{double-enveloped} vote is, finally, sent to~the~server. 
+
+The~server verifies voter's identity and strips off the~upper envelope. It sends the~vote in~the~lower envelope to~the~ballot box and associates it with a~random token $t$. The~voter can~check whether their vote was correctly recorded using a~verification~app on~their smartphone. The~app reveals $r$ and $t$, which are used to~compare the~encrypted vote stored in~the~ballot box with a~simulated vote encrypted using $r$ and corresponding the~voter's choices.}
+%It is worth mentioning here, the~every voter can~do these steps as many times as they want during the~election.
+\item \textbf{Counting.} Valid encrypted votes stored (without the~signatures) in~the~ballot box are burned to~a~DVD, on~which they are transferred to~the~counting device. The~private key is reconstructed and loaded onto~the~counting device. It produces the~result, which is burned on~another DVD and published.
+\end{enumerate}
+\bigbreak
+Estonia's Internet Voting Committee claim that, in~terms of~security and reliability, this voting protocol is equal to~traditional elections. However, it seems to~be controversial. Tests run by~a~team from~the~University of~Michigan~show that the~system can~be successfully attacked \cite{Springall}.
+
+\subsection{Norwegian~Internet Voting Protocol}
+\label{sub:norwegian}
+In~Norway, trial of~Internet elections was first organised in~2011. A~protocol that would satisfy the~security expectations was defined for~the~Norwegian~elections \cite{Gjosteen2010} and a~new cryptographic protocol was published two years later \cite{Gjosteen2012}. A~new instantiation~of~the~cryptosystem underlaying Internet voting in~Norway was introduced and is described in~\cite{Gjosteen2015}.
+
+In~the~original paper, associated with the~election~in~2011, a~simplified voting protocol is described. We believe that this protocol provides enough information~about~the~ideas on~which the~Norwegian~internet voting is based. The~players in~the~protocol are: \emph{voter}, \emph{voter's computer}. \emph{ballot box}, \emph{receipt generator} and \emph{decryption~service}. 
+\bigbreak
+The~voting scheme is divided into~three stages and the~following steps are processed:
+\begin{enumerate}
+\item \textbf{Key generation.} %Secret values $a_1$, $a_2$ and $a_3$ are generated, such that $a_1 + a_2 \equiv a_3 \pmod q$, where $q$ is a~generated prime number. From~those values, public parameters $y_1$, $y_2$ and $y_3$ are computed. 
+Asymmetric encryption~keys and three secret parameters for~the~election~are generated, first for~the~decryption~service, second for~the~ballot box and the~third for~the~receipt generator. From~these, associated public parameters are computed. Expected return codes for~each voter are also generated and sent to~the~voter.
+\item \textbf{Voting.} When the~voter choses their options, voter's computer sends the~encrypted vote to~the~ballot box. With the~cooperation~of~receipt generator, receipt codes are generated and sent to~the~voter. Those are checked by~the~voter, if they correspond with the~expected receipt codes.
+\item \textbf{Counting.} Submitted votes from~the~ballot box are sent to~the~decryption~device. There, they are decrypted and counted in~order to~get the~final result.
+\end{enumerate}
+
+According to~the~author of~the~protocol, its security properties are not perfect, yet it is reasonable to~be used for~an~i-voting experiment. In~order to~assure that the~vote remains confidential, the~voter's computer should not be corrupted. If the~vote is not correctly submitted, although not corrupted before being submitted, the~voter can~see this through receipt codes and can~complain. The~author also concludes that "any corrupt infrastructure player may prevent the~election~from~completing." \cite{Gjosteen2010}.
+
+After the~elections in~2011, the~protocol used for~it was gradually renewed and improved. One of~the~last introduced improvements on~the~underlying cryptosystem was that new techniques were used to~prove the~knowledge of~the~decryption~of~the~encrypted text. These new techniques have the~same effect as former; however, due to~their use, the~underlying cryptosystem has a~better security proof~\cite{Gjosteen2015}.
+
+\subsection{Swiss Online Voting Protocol}
+There are multiple public voting events in~Switzerland every year. Not only can~the~citizens choose their representatives in~Federal Assembly, but also referenda~are organised federally or regionally. 
+
+Cantons of~Geneva, Zürich and Neuchâtel were the~first to~introduce electronic voting. In~2013, The~Federal Council of~Switzerland published a~framework which provides security, verifiability and functionality requirements in~order to~allow all the~voters to~vote electronically. In~a~publication~by~Scytl \cite{Swiss}, a~protocol ensuring cast-as-intended verification~is provided. This protocol has been created on~the~basis of~Norwegian~internet voting protocol (described in~this thesis in~\ref{sub:norwegian}). It is basically the~improvement of~that protocol "by~not needing to~rely on~the~strong assumption~that two independent server-side entities do not collude to~preserve voter privacy" \cite{Swiss}. The~building blocks of~the~protocol are \emph{ElGamal assymetric encryption~scheme}, \emph{bit-length prime numbers} representing voting options, \emph{pseudo-random function~family}, \emph{signature scheme} made up of~probabilistic algorithms and a~\emph{verifiable mix network}.
+\bigbreak
+These are the~participants in~the~Swiss voting scheme:
+\begin{itemize}
+\item \textbf{Election~Authorities}, responsible for~the~whole elections;
+\item \textbf{Voters}, who express their opinion~by~casting a~vote;
+\item \textbf{Registration~Authorities}, who provide voters with all the~information~needed;
+\item \textbf{Voting Server}, which receives, proceeds and stores the~votes;
+\item \textbf{Voting Device}, responsible for~enabling the~voter to~select their options, forming the~vote and correctly send it to~the~voting server;
+\item \textbf{Code Generator}, which generates return codes from~the~votes;
+\item \textbf{Auditors}, in~charge of~verifying the~correctness and integrity of~election~process.
+\end{itemize}
+\bigbreak
+The~Swiss voting scheme consists of~following processes divided into~four phases:
+\begin{enumerate}
+\item \textbf{Configuration.} A~set of~voters' identities $ID$ is defined and published. The~protocol uses several key pairs, of~which public keys are published. Those keys are \emph{election~public key}, \emph{ global code generation~public key}, \emph{signing public key}. Voting options are also published in~this phase. The~global code generation~private key is given to~the~code generator and the~registration~authorities, and the~signing private key is given only to~the~registration~authorities.
+\item \textbf{Voter registration.} In~order to~register to~the~election, voter provides their identity $id \in~ID$ to~a~registration~authority. Then, voter is given their public and private keys, a~set of~return codes associated with particular choices and confirmation~and finalisation~codes. Also, voter's public key is published together with reference values associated with return codes and a~validity proof~for~finalisation~code.
+\item{ \textbf{Voting.} When the~voter is successfully authenticated, voter's $id$ and public key are stored in~their voting device. The~voter votes by~choosing from~the~voting options and entering their private key. From~these, the~vote is created and send together with voter's $id$ to~the~voting server. 
+
+When the~server successfully receives the~vote and the~voter's identity, return codes are generated and shown to~the~voter, who, then, is asked to~confirm the~vote. The~voter does so by~providing their confirmation~code to~the~voting device. Subsequently, the~confirmation~message is sent to~the~server. When the~vote is confirmed and finalisation~code is sent back to~the~device and the~voter checks whether it matches the~finalisation~code they have obtained during the~registration.}
+\item \textbf{Counting.} The~counting algorithm takes the~votes stored on~the~voting server, the~election~private key and validity proofs for~finalisation~codes and produces the~final result, which is, then, verified.
+\end{enumerate}
+
+The~described protocol requires the~voter to~type several private values to~the~voting device. This means to~copy by~hand 52 or 410 characters when \emph{Base32} is used \cite{Swiss}. The~voter cannot~perform such a~task. Therefore, the~protocol also describes a~usability layer, whose role is to~reduce the~length of~values that the~voter needs to~directly provide for~the~voting system. Its description~can~be read in~the~original paper a~we do not include it in~this thesis.
+
+
+
