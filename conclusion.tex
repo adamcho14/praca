@@ -1,4 +1,21 @@
 \chapter*{Conclusion}
 \addcontentsline{toc}{chapter}{Conclusion} % rucne pridanie do obsahu
 \markboth{Conclusion}{Conclusion} % vyriesenie hlaviciek
-This is the conclusion of our bachelor thesis, summarising its important points.
+%This is the~conclusion of~our bachelor thesis, summarising its important points.
+%Electronic elections have become integral part of~governmental administration in~Estonia, Norway and Switzerland and 
+Estonia Norway and Switzerland are piloting countries in~developing and organising electronic elections. Their election systems represent reasonable solutions and use several cryptographic primitives to~provide enough security and reliability. Representatives of~our faculty also expressed interest in~electronic elections as a~tool of~democracy for~our students and this thesis deals with~this desire.
+
+Firstly, we defined the~electronic election system and its three basic phases, and we presented some usability, security and accuracy requirements. This was important because we needed to~describe the~topic with~which we were about to~deal as clearly as possible. Keeping in~mind these requirements, we also discussed two main types of~electronic election system in~terms of~their functionality.
+
+%remote electronic election
+We also gave examples of~existing systems and described technologies they used in~order to~retain all the~aspects of~a~secure and reliable electronic election system. We also discussed some problems that those systems had. 
+
+This led us to~our own proposal of~the~electronic election system. We listed players in~this system, including voters or vote counting machine. These players played several roles in~three phases of~our proposed voting scheme. This scheme uses several technologies, such as \emph{secret-sharing scheme}, \emph{Cosign} authentication system and \emph{S/MIME} encryption standard. To~provide the~reader with~some information on~how our system had been designed, we described several proposed schemes and we explained to~the~reader why we either rejected them or built on~top of~them.
+
+As part of~our this thesis, we also implemented the~proposed system as an~Internet application. This included implementation of~the~voting application, which can run in~the~Internet browser, server for~vote collection, machine for~counting the~votes and some supplementary administration programs. 
+
+Finally, we analysed our system regarding the~usability, security and accuracy requirements we defined.
+
+We must admit that we met challenges of~various kinds during the~implementation of~our system. In~the~first place, we needed to~learn how to~work with~various cryptographic libraries, particularly \texttt{M2Crypto} for~\emph{Python} and \emph{PKI.js} for~\emph{JavaScript}. We were not a~hundred percent successful in~using these libraries, but we think that we managed to~create a~reasonable implementation. We also learnt a~lot about the~work with~\emph{CGI} scripts and \emph{S/MIME} encryption. Although we possessed a~theoretical basis in~those topics, we needed to~learn from~scratch how to~practically use them in~order to~create a~working system. Last but not least, we learnt new information about the~Internet infrastructure of~our faculty and how to~use \emph{Cosign}, a~secure single sign-on used by~our university.
+
+We hope that this thesis represents only the~beginning of~this electronic election system. There are several other goals that we want to~be accomplished. First, the~system needs to~be deployed and tested in~the~environment of~our faculty. Then, it can be improved and extended. A~smartphone application can be one of~such extensions. We think there is a~lot to~do in~the~system itself, as well. For~example, key generation is something we have not implemented, yet. And last but not least, our system must be used during a~real election in~order to~find out all its advantages and drawbacks and to~figure out to~what extent we accomplished all our desires.

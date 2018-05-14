@@ -7,7 +7,14 @@
 \usepackage{url}
 \usepackage[hidelinks,breaklinks]{hyperref}
 \usepackage[english]{babel} % vypnite pre prace v anglictine
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{automata,positioning}
 \linespread{1.25} % hodnota 1.25 by mala zodpovedat 1.5 riadkovaniu
+
+\lstset{
+	basicstyle=\ttfamily,
+}
 
 % -------------------
 % --- Definicia zakladnych pojmov
@@ -106,10 +113,13 @@ Supervisor: & \mfskolitel \\
 % -------------------
 % v tlačenej verzii s podpismi zainteresovaných osôb.
 % v elektronickej verzii sa zverejňuje zadanie bez podpisov
+\newpage 
+\thispagestyle{empty}
+\hspace{-4cm}\includegraphics[width=1.3\textwidth]{images/zadanie_ENG}
 
 \newpage 
 \thispagestyle{empty}
-\hspace{-2cm}\includegraphics[width=1.1\textwidth]{images/zadanie}
+\hspace{-4cm}\includegraphics[width=1.3\textwidth]{images/zadanie_SVK}
 
 % --- Koniec zadania
 
@@ -124,6 +134,15 @@ Supervisor: & \mfskolitel \\
 
 \vfill
 {\bf Acknowledgement:} 
+There are many people to~which we want to~express our thanks. 
+
+In~the~first place, we would like to~thank the supervisor of our bachelor thesis, \textbf{RNDr. Jaroslav Janáček, PhD.}, for~irreplaceable help and pieces of~advice in~various topics. These include design of~a~voting scheme or how to~correctly record our~thesis in~the~university's system. The~time we spent with him was very inspirational for~us.
+
+A~few people quickly helped us with~several implementation problems. Thanks to~\textbf{Jakub~Šimo}, we discovered many \emph{JavaScript}'s secrets and we found~out why we were not able to install \emph{Python} packages on~our \emph{iMac}.
+
+Our voting system is developed for~our faculty. Therefore, several faculty services needed to~be used within it. \textbf{Mgr.~Matej~Zagiba} explained to~us how \emph{Cosign} works and gave us numerous examples. \textbf{Bc.~Marek~Šuppa} gave us information about projects developed by the~members of~the~\emph{Student Development Team}.
+
+Las but not least, we would like to~thank the~members of~\textbf{ŠKAS} (our faculty's student senate), and especially their vice-chair \textbf{Mgr.~Júlia~Pukancová}, for~suggesting us the~idea of~developing an~electronic election system for~our faculty.
 
 % --- Koniec poďakovania
 
@@ -137,20 +156,21 @@ Supervisor: & \mfskolitel \\
 \newpage 
 \section*{Abstract}
 
-Abstract in the English language .
+Electronic election represents a~modern way of~collaborative decision-making. It can, in~many aspects, simplify and automatise traditional election processes. However, it raises new security and usability questions. These include easy-to-use interface, cost-effectiveness, reliability of~the~system or correct computation of~the~votes. In~this thesis we try to~deal with~them and implement our own electronic election system. Inspired by~existing solutions, we propose our own electronic voting scheme. Our proposal is, then, used to~develop an~electronic election system. This system uses an~Internet browser to~cast a~vote and is run on~a~server, which also collects the~votes. At~the~end of~the~election process, the~votes are counted in~the~machine for vote counting. This system is developed on~top of~several cryptographic primitives, such as asymmetric encryption or secret sharing, which are also described in~this thesis. Our system is, finally, analysed regarding the~defined requirements.
 
-\paragraph*{Keywords:} 
+\paragraph*{Keywords:} electronic election system, electronic voting scheme, internet application, academic senate
 
 \newpage 
 \section*{Abstrakt}
 
 
-Slovenský abstrakt v rozsahu 100-500 slov, jeden odstavec. Abstrakt
-stručne sumarizuje výsledky práce. Mal by byť pochopiteľný pre bežného
-informatika. Nemal by teda využívať skratky, termíny alebo označenie
-zavedené v práci, okrem tých, ktoré sú všeobecne známe.
+Elektronické voľby reprezentujú moderný spôsob skupinového rozhodovania sa. V~mnohom dokážu zjednodušiť a~zautomatizovať tradičné voľby, avšak prinášajú so~sebou nové bezpečnostné a~používateľské otázky. Sú to napríklad ľahko použiteľné užívateľské rozhranie, rentabilita, spoľahlivosť systému či~správne spočítanie hlasov. V~tejto práci sa s~nimi snažíme vyrovnať a implementovať náš vlastný elektronický volebný systém. Po inšpirovaní sa existujúcimi riešeniami navrhneme vlastnú elektronickú volebnú schéme. Z tejto schémy potom vyvinieme vlastný elektronický volebný systém. Tento systém využíva na~hlasovanie internetový prehliadač a beží na~serveri, ktorého úlohou je aj zbierať hlasy. Na~záver volieb sú hlasy sčítané v~sčítacom zariadení. Tento systém je postavený na~báze niekoľkých kryptografických metód, ako je napríklad asymetrické šifrovanie alebo zdieľanie tajomstva. Tieto sú taktiež popísané v~našej práci. Na~záver analyzujeme náš systém na~základe definovaných kritérií.
+%Slovenský abstrakt v rozsahu 100-500 slov, jeden odstavec. Abstrakt
+%stručne sumarizuje výsledky práce. Mal by byť pochopiteľný pre bežného
+%informatika. Nemal by teda využívať skratky, termíny alebo označenie
+%zavedené v práci, okrem tých, ktoré sú všeobecne známe.
 
-\paragraph*{Kľúčové slová:} jedno, druhé, tretie (prípadne štvrté, piate)
+\paragraph*{Kľúčové slová:} elektronický volebný systém, elektronická volebná schéma, internetová aplikácia, akademický senát
 % --- Koniec Abstrakt - Slovensky
 
 
@@ -232,7 +252,7 @@ zavedené v práci, okrem tých, ktoré sú všeobecne známe.
 \backmatter
 
 \thispagestyle{empty}
-\nocite{*}
+%\nocite{*}
 \clearpage
 
 \bibliographystyle{plain}

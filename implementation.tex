@@ -1,21 +1,254 @@
 \chapter{Implementation of~Our Solution}
 \label{kap:implementation}
-Our task for this thesis is to develop a functioning electronic election system that can be used by our faculty's academic senate. In this chapter, we describe some important implementation details and we provide examples of important parts of our code.
+Our task for this thesis is to~develop a~functioning electronic election system that~can~be used by~our faculty's academic senate. In~this chapter, we describe some important implementation details and we provide examples of~important parts of~our code.
 
 \section{Overview}
-For the desired system, we implement the electronic voting scheme described in chapter \ref{kap:solution}. This scheme consists of several entities, which together make our election system and some of which are represented by computers. Such \emph{players} have to be implemented independently, each running its own program that provides all its functionality and communication with other entities. Analysis of the final solution can be found in chapter \ref{kap:analysis}.
+For the~desired system, we implement the~electronic voting scheme described in~Chapter \ref{kap:solution}. This scheme consists of~several entities—players, which together make our election system and some of~which are represented by~computers. These players have to~be implemented independently, each running its own program that~provides all its functionality and communication with other entities. Analysis of~the~final solution can~be found in~Chapter \ref{kap:analysis}.
 
-We have chosen \emph{Python} and \emph{JavaScript} as our primary programming languages. For databases, we use \emph{SQL}, a standard language in database programming (cite for each language).
+We have chosen \emph{Python} \cite{Python} and \emph{JavaScript} \cite{JavaScript} as our primary programming languages. For databases, we use \emph{SQL} \cite{SQL}, a~standard language in~database programming. Our used encoding is \emph{UTF-8}.
+\bigbreak
+We name this system \textbf{SEVAS} (\textbf System of~\textbf Electronic \textbf Voting for \textbf Academic \textbf Senate). The~source code for this system is attached to~this thesis and consists of~several Python and JavaScript files that~provide the~voting functionality and the~administration of~votes, and of~some additional configuration, CSS and database files. More information about~the~source files can~be found in~the~included \texttt{README.md} file. The code for~this system is publicly available and can be found on~GitHub. The reader can access it here: \url{github.com/adamcho14/SEVAS.git}.
 
 \subsection{Technical Requirements}
-In order to run the system correctly, there have to be some technical requirements accomplished. On the client-side, the voter needs to have one of these supported Internet browsers: \emph{Mozilla Firefox}, \emph{Google Chrome} or \emph{Safari} (cite for each browser).
+In~order to~run the~system correctly, there have to~be some technical requirements accomplished. On the~client-side, the~voter needs to~have one of~these supported Internet browsers: \emph{Mozilla~Firefox}, \emph{Google Chrome} or \emph{Safari}.
 
-The system is developed to run on \emph{Linux} distributions and the system can be build from existing Python files. In order to provide the authentication, the Linux voting server needs to have $Apache 2$ server installed with a module that provides CoSign functionality. More about configuration of CoSign can be read on our faculty webpages (cite).
+The~system is developed to~run on \emph{Linux} distributions and the~system can~be built from~existing \emph{Python} source files. In~order to~provide the~authentication, the~\emph{Linux} voting server needs to~have \emph{Apache 2} server installed with a~module that~provides \emph{Cosign} functionality. %More about~configuration of~\emph{Cosign} can~be read on our faculty webpages (cite).
+More about~\emph{Cosign} can~be read in~Chapter \ref{kap:solution}.
+
+The~voting is provided by~a~series of~\emph{CGI} scripts. Common Gateway Interface (CGI) is a~protocol used to~run external programs—\emph{CGI} scripts—under a~server. It forwards the~request sent by~the~client to~the~external program, which is executed, and the~output of~the~program in~the~form of~a~response is sent via~the~server to~the~client \cite{CGI}. These scripts are very often used to~generate dynamic web content.
+%The~way in~which the~scripts are executed is determined by~the~server.
+
+In~order to~manage the~keys and certificates, \emph{OpenSSL} has to~be installed on the~machine for vote counting. It is a~full-featured toolkit enabling functionality of~\emph{SSL} and \emph{TLS} protocols, and also a~cryptography library \cite{OpenSSL}.
 
 \subsection{External Libraries and Packages Used} 
-We used several external libraries or packages to implement services that we do not program directly.
+In~almost every file, we include packages \texttt{cgi} and \texttt{cgitb} to~provide the~\emph{CGI} functionality. We also use several external libraries or packages to~implement services that~we do not program directly. They are used in~different parts of~our election system:
+\begin{itemize}
+\item \textbf{Front end JavaScript vote forming and vote encryption.} JavaScript cryptography library \emph{PKI.js} (cite)
+\item \textbf{Back end Python internet voting.} We import Python packages \texttt{os}, \texttt{rsa}, \texttt{sqlite3} and \texttt{base64}
+\item \textbf{Python vote collection.} Packages imported are \texttt{rsa}, \texttt{sqlite3} and \texttt{base64}.
+\item \textbf{Machine for vote counting code.} In~this code, packages \texttt{json}, \texttt{sqlite3} and \texttt{M2Crypto}.
+\item \textbf{Code for key and vote administration.} Here, we import packages \texttt{sqlite}, \texttt{rsa}, \texttt{M2Crypto}, \texttt{secretsharing} and \texttt{base64}.
+\end{itemize}
+
 \section{Database}
-\section{Voting Application}
-\section{Server for Vote Collection}
-\section{Machine for Vote Counting}
-\section{Supplementary Programs}
+We use an~open-source database library \emph{SQLite} \cite{SQLite}, which is an~embedded database with no separate server process. We strongly believe that~this database library is sufficient for our system because it is used as a~server-side data~storage. The~client does not communicate directly with the~database, but they either send data~to~the~server, which are stored in~the~database by~the~server, or all Select statements are first posted by~the~server and their results are sent to~the~client. We, too, do not expect very high traffic because our system is created for elections with no more than~about~a~few thousand voters (our faculty has about~a~thousand students). 
+
+We have also chosen \emph{SQLite} mostly because we find it sufficient for the~purpose of~this particular implementation, that~is to~show how our electronic election system works. If the~user of~this system wishes, \emph{MySQL}, \emph{PostgreSQL} or another \emph{SQL} server can~be chosen for the~practical use instead of~\emph{SQLite} library. It is obvious that~it requires some minor changes in~implementation, which can~be easily executed. 
+
+Database structure of~our voting system consists of~two separate databases stored in~the~memory of~the~server for vote collection: \emph{database of~persons} and \emph{database of~votes}. There are discusses in~the~following subsections.
+
+\subsection{Database of~Persons}
+\label{sub:persons}
+The~purpose of~this database is to~store information about~both the~candidates and the~voters. They are used to~display the~list of~candidates and to~provide the~list of~authorised voters. Thus, this database has two tables, whose structure is described below. Not only do we provide the~reader with the~information about~the~columns in~these particular tables, but we also show them how we create the~tables. In~this description, we use standard \emph{SQL} syntax to~present the~way in~which the~tables can~be created:  
+\break
+\begin{lstlisting}[language=SQL]
+CREATE TABLE Candidates (
+	CandID int NOT NULL PRIMARY KEY,
+	LastName varchar(255) NOT NULL, 
+	FirstName varchar(255) NOT NULL);	
+
+CREATE TABLE Voters (
+	UKLogin varchar(255) NOT NULL PRIMARY KEY);
+\end{lstlisting}
+\bigbreak
+Here can~be seen that~the~table of~candidates consists of~all the~information that~is displayed to~the~voter. We suggest that~the~\texttt{CandID}s be in~ascending order starting from~number $1$. The~table of~voters contains only the~voter's \emph{UK login}. The~other information are not important for the~server and can~be fetched from~the~the~data~provided by~\emph{Cosign}. 
+
+The~reader can~obtain~some more information about~the~usage of~these databases in~the~next sections.
+
+\subsection{Database of~Votes}
+\label{sub:votes}
+This database is the~internal database of~the~server for vote collection. Its purpose is to~store encrypted votes paired with the~voters' \emph{UK logins}. The~database is made up of~a~table that~can~be created with the~following \emph{SQL} statement: \break %4095
+
+\begin{lstlisting}[language=SQL]
+CREATE TABLE Votes (
+	UKLogin varchar(255) NOT NULL PRIMARY KEY,
+	Vote varchar(255) NOT NULL);
+\end{lstlisting}
+\bigbreak
+
+We discuss the~size of~the~column needed to~enclose the~usual vote and we suggest that~it should be adjusted according to~the~number of~candidates. Let us assume that~the~usual maximum number of~candidates in~an~election $n$ equals $10$ and we have three options for each, represented by~a~single digit. Then, the~size of~a~single vote $v$ is computed as $10\cdot 5 + 1 = 51$ bytes if the~candidates are numbered from~$1$ to~$10$ and every symbol in~the~vote is encoded by~a~single byte. \emph{S/MIME} encryption may increase the size of the message by 300\%. The~size of~\emph{base64}-encoded binary data~is 137\% of~the~size of~the~original data~\cite{SMIME, CiscoSize}. According to~our computations, a~single encoded vote ought not to~be larger than~$250$ bytes. %Yet, we have chosen a~larger size of~the~column representing the~encrypted vote.
+\section{Voting}
+This application provides the~voter with interface that~allows them to~authenticate and cast their vote. This application runs on the~server for vote collection as a~series \emph{CGI} scripts. The~application works as following:
+\begin{enumerate}
+\item When the~voter types the~\emph{WWW} address of~the~Internet elections, the~main~page with the~login~button is displayed. 
+\item When the~voter clicks on the~login~button, they are redirected to~the~University's central login~webpage, where they can~authenticate.
+\item When the~voter has been successfully authenticated, a~form with the~voting options, the~maximum number of~chosen options and a~button with the~label \emph{Create a~vote} is displayed. 
+\item When the~voter's desired options are chosen, the~voter clicks on the~button. If they have chosen more than~the~maximum number of~options, an~alert is displayed. Otherwise, the~vote is created, encrypted and displayed on the~page together with a~button whose label says \emph{Send the~vote}.
+\item When this button has been clicked on, the~voter is informed on the~page whether or not their vote has been successfully processed. At~this moment, they have successfully casted a~vote and they can~log out, or, for some of~the~reasons described in~Chapter \ref{kap:solution}, they were not allowed to~cast a~vote.
+\end{enumerate}
+
+In~order to~provide all the~functionality, these source files obtained from~the~\emph{PKI.js} library have to~be included in~the~source code for the~voting application: \break \texttt{addressparser.js}, \texttt{mimeparser-tzabbr.js}, \texttt{mimeparser.js}, \break \texttt{emailjs-mime-codec.js}, \texttt{emailjs-mime-types.js}, \texttt{emailjs-addressparser.js}, \break \texttt{punycode.js}, \texttt{emailjs-mime-builder.js}, \texttt{SMIMEEncryptionExample.js}.
+
+\subsection{The~Form}
+The~main~part of~the~voting application is the~\emph{HTML} form. It is sent using the~\emph{POST} method. It contains a~list of~candidates from~the~database of~persons, described in~Subsection \ref{sub:persons}. There are three radio buttons for every candidate, each representing one of~the~possible answers: \emph{positive}, \emph{negative}, or \emph{neutral}. To~each of~these answers a~particular integer value, obligatory for the~whole election, has been assigned. In~our implementation, positive answer is represented by~\texttt{1}, negative by~\texttt{2} and neutral by~\texttt{3}.
+%The~vote is sent in~a~\emph{HTML} form using the~\emph{POST} method. 
+This form also includes field \emph{vote}. This is to~be filled with the~encrypted vote. More about~vote formation can~be read in~Subsection \ref{sub:formation}.
+
+Some parts of~our code use \emph{JavaScript} and the~voter's \emph{UK login} is displayed in~the~\emph{HTML} source code. This means that the~voter  can change the~code of~the~page and send corrupted data, such as a~vote that is not in~the~right format. Therefore, votes are validated during the~counting period.
+%This means that~if the~voter knows somebody else's \emph{UK login}, they can~possibly replace their original login~with it and send their vote as somebody else's vote. Therefore, we use \emph{RSA} encryption to~encrypt the~\emph{UK login} before it is displayed to~the~user. It is necessary to~point out that~both the~encryption and decryption keys cannot be public and have to~be known only to~the~server for vote collection.
+
+\subsection{Vote Formation and Encryption}
+\label{sub:formation}
+We use a~\emph{JavaScript} program to~form the~final vote from~the~voter's answers. The~format~of~the~vote is described in~Section \ref{sek:format}. Here, we describe what~is done with the~data~from~the~form in~order to~become the~encrypted vote.
+
+It is checked whether the~number of~positive answers in~the~form does not exceed their maximum number defined by~the~election commission. All the~candidate \emph{ID}s and the~values corresponding the~checked answers are put together to~form the~vote. The~vote is, then, encrypted using \emph{S/MIME} encryption provided by~the~\emph{PKI.js} library and encoded using \emph{Base-64} encoding. For the~encryption, the~election \emph{X.509} certificate is used. More about~managing the~election keys and certificates is written in~Section \ref{sek:administration}.%We have included all the~files that~come with this library and that~we use to~encrypt the~vote in~the~attachment to~this thesis.
+
+\begin{figure}[h]
+\begin{lstlisting}[language=Java]
+function createVote(radios) {
+    var vote = "";
+    for (i = 0; i < radios.length; i++) {
+        if (radios[i].checked) {
+            vote += "<";
+            vote += radios[i].name.toString();
+            vote += "#";
+            vote += radios[i].value.toString();
+            vote += ">";
+        }
+    }
+    return vote;
+    }
+\end{lstlisting}
+\caption{Code for the~vote formatting function}
+\end{figure}
+\section{Vote Collection}
+Using the~\emph{POST} method, the~final vote is sent together with the~encrypted \emph{UK login} to~the~server for vote collection. There, a~\emph{CGI} script that~verifies the~voter and inserts the~vote to~the~database of~votes, described in~Subsection \ref{sub:votes}, is executed. 
+
+The~code of~this past consists mostly of~Select, Insert and Update \emph{SQL} statements. The~script decrypts the~\emph{UK login} and checks whether the~particular voter has their record in~the~database of~persons. If this is true, then it checks whether the~voter has their vote recorded in~the~database of~votes and whether this vote has the~special \texttt{0} value. If the~value is \texttt{0}, the~vote is not recorded. If there already has a~vote been recorded with the~voter's \emph{UK login} in~the~database, the~value is updated. Otherwise, a~new record with the~voter's \emph{UK login} and the~received vote is created. Finally, it shows the~voter a~message saying whether the~vote was successfully recorded or the~voter is not allowed to~vote. 
+
+\begin{figure}[h]
+\begin{lstlisting}[language=Python]
+import sqlite3
+
+connection = sqlite3.connect("votes.sqlite")
+cursor = connection.cursor()
+cursor.execute("INSERT INTO votes VALUES(?, ?)", (login, vote,))
+connection.commit()
+connection.close()
+\end{lstlisting}
+\caption{Example of~a~code using the~\emph{SQLite} library}
+\end{figure}
+
+\section{Vote Transfer}
+This task is performed by~the~server for vote collection at~the~beginning of~the~counting period.
+
+%The~vote transfer program selects encrypted votes from~the~database of~votes and saves all votes different from~the~special \texttt{0} vote in~\emph{JSON} encoded file $F$.
+The~vote transfer program selects encrypted votes from~the~database of~votes to~produce a~list of~all votes different from~the~special \texttt{0} vote. Let us call this list $V$. The~list $V$ is, then, saved in~\emph{JSON} encoded file $F$. JavaScript Object Notation (JSON) is a~data~interchange format~derived from~the~JavaScript object literals defined in~the~\emph{ECMAScript Programming Language Standard}. It is text-based and language-independent. It can~represent \emph{null}, \emph{numbers}, \emph{boolean~values}, \emph{strings}, \emph{arrays} and \emph{objects}. Specification of~\emph{JSON} is contained in~\cite{JSON}. %The~encrypted votes are stored in~an~array of~strings, each element representing a~single vote.
+
+The~file $F$ is saved to~a~USB flash drive by~the~voting commission and transferred to~the~machine for vote counting.
+
+\section{Vote Counting}
+The~\emph{JSON} file $F$ containing the~votes is moved from~the~USB device to~a~particular directory. Also, the~election private key is reconstructed and saved in~a~particular file. There, it is read by~the~counting program running on the~machine for vote counting. The~file undergoes several procedures in~order to~have the~votes extracted, decrypted and counted:
+\begin{enumerate}
+\item The~original list of~votes $V$ is reconstructed from~$F$. Each vote $v \in~V$ is a~string representing the~vote in~the~desired format~of~the~vote.
+\item Each vote $v \in~V$ is decrypted and parsed. The~result of~parsing is a~list of~characters $C$ which form the~string $v$.
+\item Each vote, now represented by~$C$, is checked whether it is of~the~proper format~and answers for each candidate, represented by~the~integer values, are extracted.
+\item All valid votes with extracted values are counted and the~final result is published by~the~machine.
+\end{enumerate}
+
+Vote validation, extraction and counting are more deeply described in~the~following subsections.
+
+\subsection{Validation}
+The~purpose of~the~validation is to~check whether the~vote is of~the~proper format. More formally: \newline Let the~vote $v = v_1v_2....v_n$, where $n \in~\mathbb{N}$ and $v_1, ..., v_n \in~\{\texttt{0},...,\texttt{9}$, \texttt{<}, \texttt{>}, \texttt{\#}$\}$. It can~be noticed that~subsequences that~contain~\texttt{0} immediately after~\texttt{<} or \texttt{\#}, for example \texttt{<1\#09>}, are permitted. Such case can~be represented in~a~way that~the~initial \texttt{0} be omitted from~the~final representation of~the~value during~the~extraction process. According to~this, \texttt{09} would become $9$.
+
+We call the~vote $v$ \emph{valid} if it is accepted by~deterministic finite automaton $A~=\{Q, \Sigma, \delta, q_0, F\}$, 
+where $Q = \{q_0, ..., q_4\}$, $\Sigma~= \{\texttt{0},...,\texttt{9}$, \texttt{<}, \texttt{>}, \texttt{\#}$\}$ and $F = \{q_0\}$. We do not describe the~$\delta$ function, since it can~be easily reconstructed from~the~diagram in~Figure \ref{fig:automaton}. There, the~word \emph{digit} represents any symbol of~digit \texttt{0},...,\texttt{9}.
+
+\begin{figure}[h]
+\begin{center}
+\label{fig:automaton}
+\begin{tikzpicture}[shorten >=1pt,node distance=3cm,on grid,auto] 
+   \node[state,initial,accepting] (q_0)   {$q_0$}; 
+   \node[state] (q_1) [above right=of q_0] {$q_1$}; 
+   \node[state] (q_2) [below right=of q_1] {$q_2$}; 
+   \node[state](q_3) [below right=of q_2] {$q_3$};
+   \node[state](q_4) [below right=of q_0] {$q_4$};
+    \path[->] 
+    (q_0) edge  node {\texttt{<}} (q_1)
+    (q_1) edge  node  {\emph{digit}} (q_2)
+    (q_2) edge  node {\texttt{\#}} (q_3) 
+          edge [loop right] node {\emph{digit}} ()
+    (q_3) edge node {\emph{digit}} (q_4)
+    (q_4) edge  node {\texttt{>}} (q_0) 
+          edge [loop left] node {\emph{digit}} ();
+\end{tikzpicture}
+\end{center}
+\caption{Deterministic finite automaton accepting valid votes}
+\end{figure}
+
+The~reason why we describe $A$ is that~the~code for vote validation is an~actual simulation of~this automaton. Therefore, we find $A$ a~good abstraction of~the~vote validation process as it is implemented in~our voting system.
+
+%We call the~vote $v$ \emph{valid} when $v_1=$\texttt{<} and for each $v_i,v_{i+1} \in~v$, $i \in~\mathbb{N}$:
+%\text{\texttt{1},...,\texttt{9}}\}       & \quad \text{if } v_i \in~\{\text{\texttt{<}, \texttt{\#}}
+
+
+\subsection{Extraction}
+One of~the~most important task of~this part of~our system is to~extract all the~ordered pairs \emph{(canditate\_number, value)} from~all valid votes. During~this process, it is also double-checked whether the~individual votes do not contain~more positive answers than~allowed.
+
+At~the~beginning, a~counter $q$ for the~\emph{positive} answers is initialised and set to~zero. Dictionary $D$ is initialised. In~$D$, candidate numbers $c$ would form the~key for which a~value $v$ associated with the~answer is stored. Then, list $C$, representing the~vote in~the~valid format, is looped through. Let us show to~the~reader how a~single dictionary element $D[c]$ with value $v$ is formed.
+ 
+It can~be said that~the~algorithm works in~two distinct states. The~first state is when a~\texttt{<} symbol has been read, but the~next \texttt{\#} symbol has not been reached, yet. In~this state, a~candidate number is read digit by~digit. Let $k$ be the~already read part of~the~candidate number $c$ and the~first $n$ digits thereof~have already been read. We assume that~there is at~least one digit before the~next \texttt{\#} symbol. We move on to~the~next digit $d$. Because the~numbers are represented in~the~standard decimal position notation, $k$ is changed in~the~following manner: $k:= 10k + d$. This process is finished when we reach a~\texttt{\#} symbol. Finally, we do $c:=k$.
+
+In~the~second state we have read a~\texttt{\#} symbol, but the~next \texttt{>} symbol has not been read, yet. In~this state we form the~value $v$ associated with the~candidate number similarly to~what~was done in~the~first stage. When we reach a~\texttt{>} symbol, we assign $v$ its value and we do  $D[c]:=v$. If $v$ equals the value that represents the~\emph{positive} answer, we increment $q$ by $1$.
+
+When the~whole vote was processed, we check whether $q$ has not exceeded the~maximum number of~positive answers defined by~the~election commission. If so, we return zero, otherwise we return $D$.
+
+During extraction, we deal with an~attempt to~send an~invalid vote that contains two keys $k_i$ and $k_j$ such that $k_i = k_j$, where $i < j$. According to~the~process, value $v_j$ associated with~$k_j$ rewrites value $v_i$ associated with~$k_i$.
+
+\begin{figure}[h]
+\begin{lstlisting}[language=Python]
+num = 0  # checks the number of yeses
+values = {}
+j = 1  # the first number in the string
+while j < len(l):
+    key = 0
+    val = 0
+    while l[j] != '#':
+        key = 10*key + int(l[j])
+        j += 1
+    j += 1  # the first number after "#"
+    while l[j] != '>':
+        val = 10*val + int(l[j])
+        j += 1
+    if val == 1:
+        num += 1
+    values[key] = val
+    j += 2  # the first number after "<"
+
+if num > CAND_NUM:
+    return 0
+
+return values
+\end{lstlisting}
+ \caption{Code for extraction of~the~values}
+ \end{figure}   
+
+\subsection{Counting}
+This is the~final part of~our election system. The~votes with extracted values are counted and the~final result is displayed in~this part.
+
+Let us recapitulate that~we have $3$ types of~possible answers: \emph{positive}, \emph{negative} and \emph{neutral}. At~the~beginning, $3n \in~\mathbb{N}$ variables are initialised and set to~zero, where $n$ is the~number of~candidates. Let $i$ be a~particular candidate number and $j$ be a~value representing a~particular type of~answer. Then, $c[i][j]$ represents count of~answers of~type $j$ given to candidate number $i$. %Each represents the~count of~particular type of~answers given to~a~particular candidate. 
+For every candidate $i$, it is looped through every vote $v$. For every value $j$, if $j$ is associated with key $i$ in vote $v$, then $c[i][j]$ is incremented by $1$.
+%and the~initialised variables are incrementing accordingly.
+
+Finally, it is displayed for every candidate how many positive, negative and neutral answers they were given.
+
+During the counting process, we also deal with~votes that contain invalid candidate numbers or invalid voting options. These are not counted because the~process looks for~particular candidate numbers and particular voting options.
+
+\section{Administration}
+\label{sek:administration}
+Some administration programs are also included in~our election system. They are used by~the~election commission for \emph{key generation and secret sharing of~the~election private key} and to~\emph{administer the~paper voting process}. They are mostly short, similar to~the~parts of~code already described, or they often use packages and libraries described at~the~beginning of~this chapter. We do not spend much time describing them, but we provide a~complete list of~them and shortly describe the~function of~each one:
+\begin{itemize}
+\item \textbf{Paper voting.} This is used by~the~election commission to~record that~a~voter has voted traditionally. The~election commission uses their internal \emph{UK login} and password to~log in, but they do not authenticate with \emph{Cosign}. Instead, they use a~special login~page. Then, a~form displays and they type in~the~\emph{UK login} of~the~voter that~is voting traditionally and confirm it.
+\item \textbf{Key management.}{ Here, the~electronic election public and private keys can~be generated and the~private key can~be shared among members of~the~election commission. 
+
+In~order to~generate the~election certificate and private key, the~election commission installs \emph{OpenSSL} to~a~special computer different from~the~server for vote collection. It might also be done on the~machine for vote counting, but we recommend not to~use it for security reasons. This command can~be executed to~generate the~election \emph{X.509} certificate and the~private key: \texttt{openssl req -newkey rsa:1024 -nodes -x509 -days 365 -out certificate.pem}. It creates the~certificate saved to~\texttt{certificate.pem} and the~private key saved to \texttt{privkey.pem} \cite{M2Crypto}. The~certificate is distributed in~a~way that~a~special \emph{JavaScript} file that~contains the~certificate is written and the~private key is shared among members of~the~election commission using a~secret-sharing program also attached to~this thesis. The~original file \texttt{privkey.pem} must be discarded.}
+
+We have also implemented a~secret-sharing program. It splits the~given key into several parts using \texttt{secretsharing} library for \emph{Python}. The~shares are then given to~the~members of~the~election commission. Then, it reconstructs the~key from~shares given by~some of the~members.
+
+We have not implemented any key generation program. However, we briefly describe such a~program. The~role of this program is to~generate the \emph{S/MIME} certificate and the~private key of the~election. In the~first place, it must not save the~generated private key to the~disk, but directly split it into~parts of a~shared secret. This is very important because the~private key must not be revealed. Then, the~program would share the~certificate among~the voters. This would help the~commission and decrease the~number of~operations they need to~do during~the~initialisation period.
+
+%here a~requirement on~such a~program
+
+%\item \textbf{Login~encryption.} We find it necessary to~encrypt the~voter's \emph{UK login} due to~security reasons. This service enables the~election commission to~generate \emph{RSA} public and private keys stored on the~server for vote collection.
+\end{itemize}
+%\section{Cosign Configuration}
